@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.random as npr
 from readchar import readchar
+import os
 
 
 def create_chessboard(size=4):
@@ -8,7 +9,8 @@ def create_chessboard(size=4):
 
     board = np.zeros((size, size), dtype=np.int32)
     board = initial_each_step(board)
-    print(board)
+    shown_board = draw_chessboard(board)
+    print(shown_board)
 
     return board
 
@@ -71,16 +73,54 @@ def next_step(board, direction='up'):
     return board
 
 
+def draw_chessboard(board):
+    """draw the chessboard"""
+
+    size = board.shape[0]
+    output = ''
+
+    for i in range(size):
+        output += ('+' + '-' * 6) * size
+        output += '+\n'
+        output += ('|' + ' ' * 6) * size
+        output += '|\n'
+
+    output += ('+' + '-' * 6) * size
+    output += '+'
+
+    output = list(output)
+    x_list, y_list = np.where(board != 0)
+
+    for x, y in zip(x_list, y_list):
+        rect_position = (7 * size + 2) * (2 * x + 1) + 7 * y + 5
+        num = board[x, y]
+        while True:
+            last_ch = str(num % 10)
+            num //= 10
+            output[rect_position] = last_ch
+            rect_position -= 1
+
+            if num == 0:
+                break
+
+    output = ''.join(output)
+
+    return output
+
+
+os.system('clear')
+
 chessboard_size = 4
 chessboard = create_chessboard(chessboard_size)
 
-# current_score = 0
+# TODO: set scores for the game
 keys = 'WASDRQwasdrq'
 actions = ['up', 'left', 'down', 'right', 'restart', 'exit']
 action_dict = dict(zip(keys, actions * 2))
 
 while 2048 not in chessboard:
-    print('Press a key: WASD to move, R to restart, Q to quit\n')
+    reminder_message = 'Press a key: WASD to move, R to restart, Q to quit\n'
+    print(reminder_message)
     control_key = readchar()
 
     if control_key in 'WASDwasd':
@@ -88,7 +128,9 @@ while 2048 not in chessboard:
         chessboard = next_step(chessboard, action_dict[control_key])
         if not (chessboard == temp).all():  # if the chessboard is changed
             chessboard = initial_each_step(chessboard)
-        print(chessboard)
+        shown_board = draw_chessboard(chessboard)
+        os.system('clear')
+        print(shown_board)
 
     elif control_key in 'Rr':
         chessboard = create_chessboard(chessboard_size)
@@ -101,24 +143,6 @@ while 2048 not in chessboard:
         continue
 
 if 2048 in chessboard:
-    print(chessboard)
+    shown_board = draw_chessboard(chessboard)
+    print(shown_board)
     print('Congratulations! You win!')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
