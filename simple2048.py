@@ -3,6 +3,16 @@ import numpy.random as npr
 from readchar import readchar
 
 
+def create_chessboard(size=4):
+    """create a new chessboard"""
+
+    board = np.zeros((size, size), dtype=np.int32)
+    board = initial_each_step(board)
+    print(board)
+
+    return board
+
+
 def initial_each_step(board):
     """select a random position with value 0 and set it to 2"""
 
@@ -62,49 +72,37 @@ def next_step(board, direction='up'):
 
 
 chessboard_size = 4
-chessboard = np.zeros((chessboard_size, chessboard_size), dtype=np.int32)
-chessboard = initial_each_step(chessboard)
+chessboard = create_chessboard(chessboard_size)
 
-current_score = 0
+# current_score = 0
+keys = 'WASDRQwasdrq'
+actions = ['up', 'left', 'down', 'right', 'restart', 'exit']
+action_dict = dict(zip(keys, actions * 2))
 
-print(chessboard)
-
-# do not consider restarting now
-while True:
+while 2048 not in chessboard:
+    print('Press a key: WASD to move, R to restart, Q to quit\n')
     control_key = readchar()
 
-    if control_key == 'w' or control_key == 'W': 
+    if control_key in 'WASDwasd':
         temp = chessboard.copy()  # need a slice rather than reference
-        chessboard = next_step(chessboard, 'up')
-        if not (chessboard == temp).all():
+        chessboard = next_step(chessboard, action_dict[control_key])
+        if not (chessboard == temp).all():  # if the chessboard is changed
             chessboard = initial_each_step(chessboard)
         print(chessboard)
 
-    elif control_key == 's' or control_key == 'S': 
-        temp = chessboard.copy()
-        chessboard = next_step(chessboard, 'down')
-        if not (chessboard == temp).all():
-            chessboard = initial_each_step(chessboard)
-        print(chessboard)
+    elif control_key in 'Rr':
+        chessboard = create_chessboard(chessboard_size)
 
-    elif control_key == 'a' or control_key == 'A': 
-        temp = chessboard.copy()
-        chessboard = next_step(chessboard, 'left')
-        if not (chessboard == temp).all():
-            chessboard = initial_each_step(chessboard)
-        print(chessboard)
-
-    elif control_key == 'd' or control_key == 'D': 
-        temp = chessboard.copy()
-        chessboard = next_step(chessboard, 'right')
-        if not (chessboard == temp).all():
-            chessboard = initial_each_step(chessboard)
-        print(chessboard)
-
-    else:
+    elif control_key in 'Qq':
+        print('Done')
         break
 
-print('Done')
+    else:
+        continue
+
+if 2048 in chessboard:
+    print(chessboard)
+    print('Congratulations! You win!')
 
 
 
