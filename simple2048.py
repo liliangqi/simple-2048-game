@@ -2,7 +2,6 @@ import numpy as np
 import numpy.random as npr
 from readchar import readchar
 import os
-import collections
 
 
 def create_chessboard(size=4):
