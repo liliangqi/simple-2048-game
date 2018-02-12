@@ -2,6 +2,7 @@ import numpy as np
 import numpy.random as npr
 from readchar import readchar
 import os
+import collections
 
 
 def create_chessboard(size=4):
@@ -10,6 +11,7 @@ def create_chessboard(size=4):
     board = np.zeros((size, size), dtype=np.int32)
     board = initial_each_step(board)
     shown_board = draw_chessboard(board)
+    os.system('clear')
     print(shown_board)
 
     return board
@@ -27,8 +29,8 @@ def initial_each_step(board):
     position = npr.choice(choice_range_list)
     position_x = position // board_size
     position_y = position % board_size
-    # TODO: initialize with 4 in lower probability
-    board[position_x, position_y] = 2
+    # initialize with 2 or 4 (in lower probability)
+    board[position_x, position_y] = 2 if npr.choice(100) > 69 else 4
 
     return board
 
@@ -73,26 +75,50 @@ def next_step(board, direction='up'):
     return board
 
 
+def able_to_step(board):
+    """judge if it is able to go to next step in current chessboard"""
+
+    board_size = board.shape[0]
+    flag = False
+
+    if 0 in board:  # if there is 0 in the board, it must be able to continue
+        flag = True
+    else:
+        for i in range(board_size):
+            column = board[:, i]
+            # judge if there are two adjacent numbers with same value
+            for prev, nex in zip(column[:-1], column[1:]):
+                if prev == nex:
+                    flag = True
+                    break
+            if flag == True:
+                break
+
+    return flag
+
+
 def draw_chessboard(board):
     """draw the chessboard"""
 
-    size = board.shape[0]
+    board_size = board.shape[0]
     output = ''
 
-    for i in range(size):
-        output += ('+' + '-' * 6) * size
+    # draw the emepty chessboard
+    for i in range(board_size):
+        output += ('+' + '-' * 6) * board_size
         output += '+\n'
-        output += ('|' + ' ' * 6) * size
+        output += ('|' + ' ' * 6) * board_size
         output += '|\n'
 
-    output += ('+' + '-' * 6) * size
+    output += ('+' + '-' * 6) * board_size
     output += '+'
 
     output = list(output)
     x_list, y_list = np.where(board != 0)
 
     for x, y in zip(x_list, y_list):
-        rect_position = (7 * size + 2) * (2 * x + 1) + 7 * y + 5
+        # find the position to fill the non-zero number
+        rect_position = (7 * board_size + 2) * (2 * x + 1) + 7 * y + 5
         num = board[x, y]
         while True:
             last_ch = str(num % 10)
@@ -108,8 +134,6 @@ def draw_chessboard(board):
     return output
 
 
-os.system('clear')
-
 chessboard_size = 4
 chessboard = create_chessboard(chessboard_size)
 
@@ -119,30 +143,41 @@ actions = ['up', 'left', 'down', 'right', 'restart', 'exit']
 action_dict = dict(zip(keys, actions * 2))
 
 while 2048 not in chessboard:
-    reminder_message = 'Press a key: WASD to move, R to restart, Q to quit\n'
-    print(reminder_message)
-    control_key = readchar()
+    if able_to_step(chessboard) or able_to_step(chessboard.T):
+        reminder_message = 'Press a key: WASD to move, R to restart, Q to quit'
+        print(reminder_message)
+        control_key = readchar()
 
-    if control_key in 'WASDwasd':
-        temp = chessboard.copy()  # need a slice rather than reference
-        chessboard = next_step(chessboard, action_dict[control_key])
-        if not (chessboard == temp).all():  # if the chessboard is changed
-            chessboard = initial_each_step(chessboard)
-        shown_board = draw_chessboard(chessboard)
-        os.system('clear')
-        print(shown_board)
+        if control_key in 'WASDwasd':
+            temp = chessboard.copy()  # need a slice rather than reference
+            chessboard = next_step(chessboard, action_dict[control_key])
+            if not (chessboard == temp).all():  # if the chessboard is changed
+                chessboard = initial_each_step(chessboard)
+            shown_board = draw_chessboard(chessboard)
+            os.system('clear')
+            print(shown_board)
 
-    elif control_key in 'Rr':
-        chessboard = create_chessboard(chessboard_size)
+        elif control_key in 'Rr':
+            chessboard = create_chessboard(chessboard_size)
 
-    elif control_key in 'Qq':
-        print('Done')
-        break
+        elif control_key in 'Qq':
+            print('Bye~')
+            break
 
+        else:
+            continue
     else:
-        continue
+        print('Gameover. Press R to restart, or Q to quit.')
+        if readchar() in 'Rr':
+            chessboard = create_chessboard(chessboard_size)
+        elif readchar() in 'Qq':
+            print('Bye~')
+            break
+        else:
+            continue
 
 if 2048 in chessboard:
+    os.system('clear')
     shown_board = draw_chessboard(chessboard)
     print(shown_board)
     print('Congratulations! You win!')
