@@ -90,7 +90,7 @@ def able_to_step(board):
                 if prev == nex:
                     flag = True
                     break
-            if flag == True:
+            if flag:
                 break
 
     return flag
@@ -180,3 +180,4 @@ if 2048 in chessboard:
     shown_board = draw_chessboard(chessboard)
     print(shown_board)
     print('Congratulations! You win!')
+    
