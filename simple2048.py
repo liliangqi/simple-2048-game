@@ -17,7 +17,7 @@ def create_chessboard(size=4):
 
 
 def initial_each_step(board):
-    """select a random position with value 0 and set it to 2"""
+    """select a random position with value 0 and set it to 2 or 4"""
 
     board_size = board.shape[0]
     choice_range_list = []
@@ -180,4 +180,3 @@ if 2048 in chessboard:
     shown_board = draw_chessboard(chessboard)
     print(shown_board)
     print('Congratulations! You win!')
-    
