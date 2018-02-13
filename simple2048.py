@@ -29,7 +29,7 @@ def initial_each_step(board):
     position_x = position // board_size
     position_y = position % board_size
     # initialize with 2 or 4 (in lower probability)
-    board[position_x, position_y] = 2 if npr.choice(100) > 69 else 4
+    board[position_x, position_y] = 2 if npr.choice(100) > 79 else 4
 
     return board
 
