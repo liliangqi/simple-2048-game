@@ -127,51 +127,51 @@ def draw_chessboard(board):
 
     return output
 
+if __name__ == '__main__':
+    chessboard_size = 5
+    chessboard = create_chessboard(chessboard_size)
 
-chessboard_size = 5
-chessboard = create_chessboard(chessboard_size)
+    # TODO: set scores for the game
+    keys = 'WASDRQwasdrq'
+    actions = ['up', 'left', 'down', 'right', 'restart', 'exit']
+    action_dict = dict(zip(keys, actions * 2))
 
-# TODO: set scores for the game
-keys = 'WASDRQwasdrq'
-actions = ['up', 'left', 'down', 'right', 'restart', 'exit']
-action_dict = dict(zip(keys, actions * 2))
+    while 2048 not in chessboard:
+        if able_to_step(chessboard) or able_to_step(chessboard.T):
+            print('Press a key: WASD to move, R to restart, Q to quit')
+            control_key = readchar()
 
-while 2048 not in chessboard:
-    if able_to_step(chessboard) or able_to_step(chessboard.T):
-        reminder_message = 'Press a key: WASD to move, R to restart, Q to quit'
-        print(reminder_message)
-        control_key = readchar()
+            if control_key in 'WASDwasd':
+                temp = chessboard.copy()  # need a slice rather than reference
+                chessboard = next_step(chessboard, action_dict[control_key])
+                # if the chessboard is changed
+                if not (chessboard == temp).all():
+                    chessboard = initial_each_step(chessboard)
+                shown_board = draw_chessboard(chessboard)
+                os.system('clear')
+                print(shown_board)
 
-        if control_key in 'WASDwasd':
-            temp = chessboard.copy()  # need a slice rather than reference
-            chessboard = next_step(chessboard, action_dict[control_key])
-            if not (chessboard == temp).all():  # if the chessboard is changed
-                chessboard = initial_each_step(chessboard)
-            shown_board = draw_chessboard(chessboard)
-            os.system('clear')
-            print(shown_board)
+            elif control_key in 'Rr':
+                chessboard = create_chessboard(chessboard_size)
 
-        elif control_key in 'Rr':
-            chessboard = create_chessboard(chessboard_size)
+            elif control_key in 'Qq':
+                print('Bye~')
+                break
 
-        elif control_key in 'Qq':
-            print('Bye~')
-            break
-
+            else:
+                continue
         else:
-            continue
-    else:
-        print('Gameover. Press R to restart, or Q to quit.')
-        if readchar() in 'Rr':
-            chessboard = create_chessboard(chessboard_size)
-        elif readchar() in 'Qq':
-            print('Bye~')
-            break
-        else:
-            continue
+            print('Gameover. Press R to restart, or Q to quit.')
+            if readchar() in 'Rr':
+                chessboard = create_chessboard(chessboard_size)
+            elif readchar() in 'Qq':
+                print('Bye~')
+                break
+            else:
+                continue
 
-if 2048 in chessboard:
-    os.system('clear')
-    shown_board = draw_chessboard(chessboard)
-    print(shown_board)
-    print('Congratulations! You win!')
+    if 2048 in chessboard:
+        os.system('clear')
+        shown_board = draw_chessboard(chessboard)
+        print(shown_board)
+        print('Congratulations! You win!')
