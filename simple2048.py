@@ -19,17 +19,10 @@ def create_chessboard(size=4):
 def initial_each_step(board):
     """select a random position with value 0 and set it to 2 or 4"""
 
-    board_size = board.shape[0]
-    choice_range_list = []
-    x_list, y_list = np.where(board == 0)
-    for x, y in zip(x_list, y_list):
-        choice_range_list.append(x * board_size + y)
-
-    position = npr.choice(choice_range_list)
-    position_x = position // board_size
-    position_y = position % board_size
+    positions = np.argwhere(board == 0)
+    position = positions[npr.choice(positions.shape[0])]
     # initialize with 2 or 4 (in lower probability)
-    board[position_x, position_y] = 2 if npr.choice(100) > 79 else 4
+    board[position[0], position[1]] = 2 if npr.choice(100) > 79 else 4
 
     return board
 
@@ -133,7 +126,7 @@ def draw_chessboard(board):
     return output
 
 
-chessboard_size = 4
+chessboard_size = 5
 chessboard = create_chessboard(chessboard_size)
 
 # TODO: set scores for the game
