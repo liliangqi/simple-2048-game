@@ -24,7 +24,7 @@ def initial_each_step(board):
     positions = np.argwhere(board == 0)
     position = positions[npr.choice(positions.shape[0])]
     # initialize with 2 or 4 (in lower probability)
-    board[position[0], position[1]] = 2 if npr.choice(100) > 79 else 4
+    board[position[0], position[1]] = 4 if npr.choice(100) > 79 else 2
 
     return board
 
