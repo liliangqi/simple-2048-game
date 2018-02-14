@@ -9,6 +9,8 @@ def create_chessboard(size=4):
 
     board = np.zeros((size, size), dtype=np.int32)
     board = initial_each_step(board)
+    # initialize with 2 numbers at the beginning
+    board = initial_each_step(board)
     shown_board = draw_chessboard(board)
     os.system('clear')
     print(shown_board)
