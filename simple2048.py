@@ -78,14 +78,20 @@ def able_to_step(board):
     if 0 in board:  # if there is 0 in the board, it must be able to continue
         flag = True
     else:
-        for i in range(board_size):
-            column = board[:, i]
-            # judge if there are two adjacent numbers with same value
-            for prev, nex in zip(column[:-1], column[1:]):
-                if prev == nex:
-                    flag = True
-                    break
-            if flag:
+        # # method 1
+        # for i in range(board_size):
+        #     column = board[:, i]
+        #     # judge if there are two adjacent numbers with same value
+        #     for prev, nex in zip(column[:-1], column[1:]):
+        #         if prev == nex:
+        #             flag = True
+        #             break
+        #     if flag:
+        #         break
+        # method 2
+        for i in range(board_size - 1):
+            if (board[i] == board[i+1]).any():
+                flag = True
                 break
 
     return flag
@@ -128,7 +134,7 @@ def draw_chessboard(board):
     return output
 
 if __name__ == '__main__':
-    chessboard_size = 5
+    chessboard_size = 4
     chessboard = create_chessboard(chessboard_size)
 
     # TODO: set scores for the game
